@@ -7,29 +7,54 @@ const indexUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/t
 const changeUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&sheet=Change&tq=${encodeURIComponent('SELECT A, B')}`;
 
 function fetchSheetData() {
+    console.log("Загрузка индекса...");
+
     fetch(indexUrl)
         .then(res => res.text())
         .then(indexText => {
-            const indexJson = JSON.parse(indexText.substring(47).slice(0, -2));
-            const index = parseInt(indexJson.table.rows[0].c[0].v); // значение из A1
+            const rawIndexJson = indexText.substring(47).slice(0, -2);
+            console.log("Ответ от Index:", rawIndexJson);
+
+            const indexJson = JSON.parse(rawIndexJson);
+            const index = parseInt(indexJson.table.rows[0].c[0].v);
+
+            console.log("Текущий индекс:", index);
+            console.log("Загрузка данных Change...");
 
             fetch(changeUrl)
                 .then(res => res.text())
                 .then(changeText => {
-                    const changeJson = JSON.parse(changeText.substring(47).slice(0, -2));
+                    const rawChangeJson = changeText.substring(47).slice(0, -2);
+                    console.log("Ответ от Change:", rawChangeJson);
+
+                    const changeJson = JSON.parse(rawChangeJson);
                     const rows = changeJson.table.rows;
 
-                    if (!rows[index] || !rows[index].c[0] || !rows[index].c[1]) {
-                        console.error("Некорректный индекс или пустые данные.");
+                    if (!rows[index]) {
+                        console.error(`Нет строки с индексом ${index} в Change`);
                         return;
                     }
 
-                    const phoneNumber = rows[index].c[0].v.trim();
-                    const message = rows[index].c[1].v;
+                    const row = rows[index];
+                    console.log("Выбранная строка:", row);
+
+                    const phoneCell = row.c[0];
+                    const messageCell = row.c[1];
+
+                    if (!phoneCell || !messageCell) {
+                        console.error("Пустые ячейки:", phoneCell, messageCell);
+                        return;
+                    }
+
+                    const phoneNumber = String(phoneCell.v).trim();
+                    const message = String(messageCell.v).trim();
+
+                    console.log("Номер:", phoneNumber);
+                    console.log("Сообщение:", message);
 
                     const redirectUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                    console.log("Ссылка для перехода:", redirectUrl);
 
-                    console.log("Переход на WhatsApp через 2 секунды:", redirectUrl);
                     setTimeout(() => {
                         window.location.href = redirectUrl;
                     }, 2000);
@@ -41,7 +66,6 @@ function fetchSheetData() {
 
 window.onload = fetchSheetData;
 
-// Кнопка (если нужно вручную)
 function goToWhatsApp() {
     fetchSheetData();
 }
