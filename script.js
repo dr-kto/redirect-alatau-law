@@ -39,9 +39,7 @@ function fetchSheetData() {
                         .then(() => {
                             console.log("Индекс обновлён. Переход через 2 секунды...");
                             const redirectUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-                            setTimeout(() => {
-                                window.location.href = redirectUrl;
-                            }, 2000);
+                            
                         })
                         .catch(err => console.error("Ошибка при обновлении индекса:", err));
                 })
