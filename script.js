@@ -1,7 +1,7 @@
 const spreadsheetId = '1bnGVEQUkAyMB3CoFyUremGd-_WSuKyGH_vR7Ojl2usY';
 const indexUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&sheet=Index&tq=${encodeURIComponent('SELECT A')}`;
 const changeUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&sheet=Change&tq=${encodeURIComponent('SELECT A, B')}`;
-const updateIndexUrl = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec'; // вставь свой
+const updateIndexUrl = 'https://script.google.com/macros/s/AKfycbzHJybAnTej_2007fXN5PXxRAYrGKuipV4GU2H8HkUm_4H-I0gpx5ccPjMCkqWa6GM_sg/exec'; // вставь свой
 
 function fetchSheetData() {
     console.log("Загрузка индекса...");
